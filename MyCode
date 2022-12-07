@@ -42,3 +42,28 @@ function setHomePage(req,res){
 }
 
 server.listen(8080);
+
+want to get value from a form: Here's the form:
+
+<form method='post' action='/stack'>
+     <input name="stack0" value="stackoverflow0"/>
+     <input name="stack1" value="stackoverflow1"/>
+     <button type='submit'>Click</button>
+</form>
+if we want to get the value from the form we use:
+
+app.post('/stack',function(req,res){
+     var tmp = req.body.stack0;
+     var tmp1 = req.body.stack1;
+
+     console.log(tmp)  // stackoverflow0
+     console.log(tmp1)  // stackoverflow1
+});
+I wont use this method because i have a lot of values, i want something like loop,
+
+for(var i=0;i<2;i++){
+    var tmp = req.body.stack(i); // any syntaxe like that ?
+
+    console.log(tmp)  // souldstackoverflow0 if i==0,  souldstackoverflow1 if i==1
+}
+when i take 0; should tmp take req.body.stack0, and when i==1 tmp = req.body.stack1 ? help plz, and thnx :)
