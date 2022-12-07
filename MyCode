@@ -1,3 +1,44 @@
               Node Js
 to redirect one page to another page in node js:
 https://www.youtube.com/watch?v=0orHyShf0jE
+
+code:
+
+const http = require('http');
+const server = http.createServer(function (req, res) {
+   if(req.url==='/') {
+       return setHomePage(req,res);
+   }
+
+   if(req.url==='/username' && req.method.toLowerCase()==='post'){
+    return submitUserName(req,res);
+}
+});
+
+function submitUserName(req,res){
+    res.setHeader('Content-Type' , 'text/html');
+    return res.end(`<div><h2>hi Gopal you done!..</h2></div>`);
+}
+
+function setHomePage(req,res){
+    res.setHeader('Content-Type' , 'text/html');
+    return res.end(`
+    <!Doctype html>
+    <html>
+    <head><title> GPL web </title></head>    
+    <body>
+    <form action="/username" method="post">   
+    <div>
+    <label>enter correct name</label>
+    <input type="text" name="username"/>
+    </div>
+    <div>
+    <input type="submit" value="goto"/>
+    </div>
+    </form>
+    </body>    
+    </html>
+    `);
+}
+
+server.listen(8080);
