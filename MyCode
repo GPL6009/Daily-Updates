@@ -43,6 +43,8 @@ function setHomePage(req,res){
 
 server.listen(8080);
 
+              node js
+
 want to get value from a form: Here's the form:
 
 <form method='post' action='/stack'>
@@ -67,3 +69,14 @@ for(var i=0;i<2;i++){
     console.log(tmp)  // souldstackoverflow0 if i==0,  souldstackoverflow1 if i==1
 }
 when i take 0; should tmp take req.body.stack0, and when i==1 tmp = req.body.stack1 ? help plz, and thnx :)
+
+                  javascript
+    
+    <script>
+      
+    // Here the value is stored in new variable x 
+    function myFunction() {
+        var x = document.getElementById("myText").value;
+        document.getElementById("demo").innerHTML = x;
+    }
+    </script>
