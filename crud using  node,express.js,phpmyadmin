@@ -1,0 +1,222 @@
+npm init
+npm install --save express mysql body-parser ejs
+        
+        app.js
+
+const path = require('path');
+const express = require('express');
+const ejs = require('ejs');
+const bodyParser = require('body-parser');
+const mysql = require('mysql');
+const app = express();
+
+const connection=mysql.createConnection({
+    host:'localhost',
+    user:'root',
+    password:'',
+    database:'node_crud'
+});
+
+connection.connect(function(error){
+    if(!!error) console.log(error);
+    else console.log('Database Connected!');
+}); 
+
+//set views file
+app.set('views',path.join(__dirname,'views'));
+			
+//set view engine
+app.set('view engine', 'ejs');
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
+
+
+
+app.get('/',(req, res) => {
+    // res.send('CRUD Operation using NodeJS / ExpressJS / MySQL');
+    let sql = "SELECT * FROM users";
+    let query = connection.query(sql, (err, rows) => {
+        if(err) throw err;
+        res.render('user_index', {
+            title : 'CRUD Operation using NodeJS / ExpressJS / MySQL',
+            users : rows
+        });
+    });
+});
+
+
+app.get('/add',(req, res) => {
+    res.render('user_add', {
+        title : 'CRUD Operation using NodeJS / ExpressJS / MySQL'
+    });
+});
+
+app.post('/save',(req, res) => { 
+    let data = {name: req.body.name, email: req.body.email, phone_no: req.body.phone_no};
+    let sql = "INSERT INTO users SET ?";
+    let query = connection.query(sql, data,(err, results) => {
+      if(err) throw err;
+      res.redirect('/');
+    });
+});
+
+app.get('/edit/:userId',(req, res) => {
+    const userId = req.params.userId;
+    let sql = `Select * from users where id = ${userId}`;
+    let query = connection.query(sql,(err, result) => {
+        if(err) throw err;
+        res.render('user_edit', {
+            title : 'CRUD Operation using NodeJS / ExpressJS / MySQL',
+            user : result[0]
+        });
+    });
+});
+
+
+app.post('/update',(req, res) => {
+    const userId = req.body.id;
+    let sql = "update users SET name='"+req.body.name+"',  email='"+req.body.email+"',  phone_no='"+req.body.phone_no+"' where id ="+userId;
+    let query = connection.query(sql,(err, results) => {
+      if(err) throw err;
+      res.redirect('/');
+    });
+});
+
+
+app.get('/delete/:userId',(req, res) => {
+    const userId = req.params.userId;
+    let sql = `DELETE from users where id = ${userId}`;
+    let query = connection.query(sql,(err, result) => {
+        if(err) throw err;
+        res.redirect('/');
+    });
+});
+
+
+// Server Listening
+app.listen(3000, () => {
+    console.log('Server is running at port 3000');
+});
+
+
+              user_index.ejs
+              
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title><%= title %></title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+</head>
+<body>
+
+<div class="container">
+  <h2><%= title %></h2>
+  <a href="/add" class="btn btn-sm btn-primary">Add User</a><br/><br/>
+  <table class="table table-dark table-striped">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Phone No.</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+        <% users.forEach(function(user){ %>
+            <tr>
+                <td><%= user.name %></td>
+                <td><%= user.email %></td>
+                <td><%= user.phone_no %></td>
+                <td>
+                    <a href="edit/<%= user.id %>" class="btn btn-sm btn-primary">Edit</a>
+                    <a href="delete/<%= user.id %>" class="btn btn-sm btn-danger">Delete</a>
+                </td>
+            </tr>
+        <% }); %>
+    </tbody>
+  </table>
+</div>
+
+</body>
+</html>
+
+user_add.ejs
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title><%= title %></title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+</head>
+<body>
+
+<div class="container">
+  <h2><%= title %></h2>
+  <form action="/save" method="post">
+    <div class="form-group">
+      <label for="name">Name:</label>
+      <input type="text" class="form-control" id="email" placeholder="Enter Name" name="name" required>
+    </div>
+    <div class="form-group">
+      <label for="email">Email:</label>
+      <input type="email" class="form-control" id="email" placeholder="Enter email" name="email" required>
+    </div>
+    <div class="form-group">
+      <label for="phone">Phone No:</label>
+      <input type="text" class="form-control" id="pwd" placeholder="Enter Phone No" name="phone_no" required>
+    </div>
+    <button type="submit" class="btn btn-primary">Submit</button>
+  </form>
+</div>
+
+</body>
+</html>
+
+
+user_edit.ejs
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title><%= title %></title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+</head>
+<body>
+
+<div class="container">
+  <h2><%= title %></h2>
+  <form action="/update" method="post">
+    <input type="hidden" value="<%= user.id %>" name="id">
+    <div class="form-group">
+      <label for="name">Name:</label>
+      <input type="text" class="form-control" id="email" placeholder="Enter Name" value="<%= user.name %>" name="name" required>
+    </div>
+    <div class="form-group">
+      <label for="email">Email:</label>
+      <input type="email" class="form-control" id="email" placeholder="Enter email" value="<%= user.email %>" name="email" required>
+    </div>
+    <div class="form-group">
+      <label for="phone">Phone No:</label>
+      <input type="text" class="form-control" id="pwd" placeholder="Enter Phone No" value="<%= user.phone_no %>" name="phone_no" required>
+    </div>
+    <button type="submit" class="btn btn-primary">Submit</button>
+  </form>
+</div>
+
+</body>
+</html>
