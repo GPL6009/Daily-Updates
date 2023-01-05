@@ -15,3 +15,10 @@ https://www.digitalocean.com/community/tutorials/nodejs-creating-your-own-expres
 
 // pagination mysql, node, ts,
 https://www.youtube.com/watch?v=l7cgPON5TIY
+
+How do I redirect in expressjs while passing some context?
+https://stackoverflow.com/questions/19035373/how-do-i-redirect-in-expressjs-while-passing-some-context
+
+// Server Side Pagination, Front End Implementation - NodeJS, MySQL & EJS
+https://www.youtube.com/watch?v=bRRhjs2Dqc4
+https://github.com/lukechopper/NodeJS-EJS-Pagination
